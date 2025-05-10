@@ -1,0 +1,10 @@
+{
+  "log_level": "info",
+  "log_encoding": "console",
+  "log_file": false,
+  "log_file_path": "./logs/",
+  "http_port": "8080",
+  "redis_host": "localhost",
+  "redis_port": "6379",
+  "redis_pool_size": 10
+}
