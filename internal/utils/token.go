@@ -85,7 +85,6 @@ func ValidateAuthToken(ctx context.Context, accessToken string) (*jwt.Token, err
 		return nil, errors.New("invalid token")
 	}
 
-	fmt.Println(claims)
 	email, ok := claims["email"].(string)
 	if !ok {
 		Logger.Error(err)

@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"open-api/internal/constants"
 	"open-api/internal/models"
@@ -23,8 +22,6 @@ func Authenticate(next http.Handler) http.Handler {
 			utils.WriteJSON(w, http.StatusUnauthorized, res)
 			return
 		}
-
-		fmt.Println(accessToken)
 
 		_, err := utils.ValidateAuthToken(ctx, accessToken)
 		if err != nil {

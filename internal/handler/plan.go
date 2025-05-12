@@ -13,12 +13,12 @@ func (h *Handler) CreatePlan(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.Plan{}
+	req := &models.CreatePlanRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
 	err := utils.ReadJSON(w, r, req)
 	if err != nil {
-		Logger.Errorw("error reading request", "error", err)
+		Logger.Errorf("error reading request, error: %s", err)
 		res.Status = "error"
 		res.Message = "Invalid Request"
 		utils.WriteJSON(w, http.StatusBadRequest, res)
@@ -33,7 +33,13 @@ func (h *Handler) CreatePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Service.CreatePlan(ctx, req)
+	plan := &models.Plan{
+		Name:   req.Name,
+		Type:   req.Type,
+		Status: req.Status,
+		Amount: req.Amount,
+	}
+	err = h.Service.CreatePlan(ctx, plan)
 	if err != nil {
 		utils.ErrorJSON(w, err, http.StatusInternalServerError)
 		return
@@ -71,7 +77,7 @@ func (h *Handler) UpdatePlan(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.Plan{}
+	req := &models.UpdatePlanRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
 	err := utils.ReadJSON(w, r, req)
@@ -91,7 +97,14 @@ func (h *Handler) UpdatePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Service.UpdatePlan(ctx, req)
+	plan := &models.Plan{
+		ID:     req.ID,
+		Name:   req.Name,
+		Type:   req.Type,
+		Amount: req.Amount,
+		Status: req.Status,
+	}
+	err = h.Service.UpdatePlan(ctx, plan)
 	if err != nil {
 		res.Status = "error"
 		res.Message = err.Error()
@@ -107,26 +120,23 @@ func (h *Handler) UpdatePlan(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) DeletePlanByID(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
-	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.HTTPRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
-	err := utils.ReadJSON(w, r, req)
+	queryParams := r.URL.Query()
+	id := queryParams.Get("id")
+
+	err := h.Service.DeletePlanByID(ctx, id)
 	if err != nil {
-		Logger.Errorw("error reading request", "error", err)
 		res.Status = "error"
-		res.Message = "Invalid Request"
-		utils.WriteJSON(w, http.StatusBadRequest, res)
+		res.Message = err.Error()
+		utils.ErrorJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	errs := utils.ValidateParams(req)
-	if errs != nil {
-		res.Status = "error"
-		res.Message = errs[0].Error()
-		utils.WriteJSON(w, http.StatusBadRequest, res)
-		return
-	}
+	res.Status = "success"
+	res.Message = "Plan Deleted"
+	utils.WriteJSON(w, http.StatusOK, res)
+	return
 
 }

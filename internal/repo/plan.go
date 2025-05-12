@@ -26,9 +26,17 @@ func (repo *Repo) CreatePlan(ctx context.Context, plan *models.Plan) error {
 
 func (repo *Repo) GetPlanByID(ctx context.Context, id string) (models.Plan, error) {
 	var plan models.Plan
-	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM plans WHERE id = $1`, id)
+	sqlRow := repo.DB.DB().QueryRow(`SELECT id, name, type, status, amount, created_at, updated_at FROM plans WHERE id = $1`, id)
 
-	err := sqlRow.Scan(&plan)
+	err := sqlRow.Scan(
+		&plan.ID,
+		&plan.Name,
+		&plan.Type,
+		&plan.Status,
+		&plan.Amount,
+		&plan.CreatedAt,
+		&plan.UpdatedAt,
+	)
 	if err != nil {
 		return plan, err
 	}
@@ -47,22 +55,17 @@ func (repo *Repo) UpdatePlan(ctx context.Context, plan *models.Plan) error {
 		argPos++
 	}
 	if plan.Type != "" {
-		setClauses = append(setClauses, "id=$"+strconv.Itoa(argPos))
-		args = append(args, plan.Type)
-		argPos++
-	}
-	if plan.Status != "" {
-		setClauses = append(setClauses, "phone=$"+strconv.Itoa(argPos))
+		setClauses = append(setClauses, "type=$"+strconv.Itoa(argPos))
 		args = append(args, plan.Status)
 		argPos++
 	}
 	if plan.Status != "" {
-		setClauses = append(setClauses, "partner_id=$"+strconv.Itoa(argPos))
+		setClauses = append(setClauses, "status=$"+strconv.Itoa(argPos))
 		args = append(args, plan.Status)
 		argPos++
 	}
 	if plan.Amount != 0 {
-		setClauses = append(setClauses, "password=$"+strconv.Itoa(argPos))
+		setClauses = append(setClauses, "amount=$"+strconv.Itoa(argPos))
 		args = append(args, plan.Amount)
 		argPos++
 	}
