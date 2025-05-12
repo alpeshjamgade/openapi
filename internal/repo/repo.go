@@ -12,7 +12,7 @@ type IRepo interface {
 	// user
 	CreateUser(ctx context.Context, user *models.User) error
 	GetUserByEmail(ctx context.Context, email string) (models.User, error)
-	GetUserByEmailAndPassword(ctx context.Context, email, password string) (*models.User, error)
+	GetUserByEmailAndPassword(ctx context.Context, email, password string) (models.User, error)
 	UpdateUser(ctx context.Context, user *models.User) error
 	DeleteUserByEmail(ctx context.Context, email string) error
 

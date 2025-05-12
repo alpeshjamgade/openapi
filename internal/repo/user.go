@@ -120,13 +120,37 @@ func (repo *Repo) DeleteUserByEmail(ctx context.Context, email string) error {
 	return nil
 }
 
-func (repo *Repo) GetUserByEmailAndPassword(ctx context.Context, email, hashedPassword string) (*models.User, error) {
-	var user *models.User
-	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM users WHERE email = $1 AND password =$2`, email, hashedPassword)
+func (repo *Repo) GetUserByEmailAndPassword(ctx context.Context, email, hashedPassword string) (models.User, error) {
+	var user models.User
+	sqlRow := repo.DB.DB().QueryRow(`SELECT 
+    	id,
+    	name,
+    	email,
+    	phone,
+    	website,
+    	about,
+    	state,
+    	partner_id,
+    	password,
+    	created_at,
+    	updated_at
+    FROM users WHERE email = $1 AND password =$2`, email, hashedPassword)
 
-	err := sqlRow.Scan(&user)
+	err := sqlRow.Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Phone,
+		&user.Website,
+		&user.About,
+		&user.State,
+		&user.PartnerID,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, errors.New("email or password is not correct")
+		return user, errors.New("email or password is not correct")
 	}
 	if err != nil {
 		return user, err

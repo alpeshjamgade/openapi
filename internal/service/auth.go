@@ -15,7 +15,7 @@ func (svc *Service) Login(ctx context.Context, loginRequest *models.LoginRequest
 	user, err := svc.repo.GetUserByEmailAndPassword(ctx, loginRequest.Email, string(hashedPassword))
 	if err != nil {
 		return nil, err
-	} else if user == nil {
+	} else if user.Email == "" {
 		return nil, errors.New("user not found")
 	}
 
