@@ -13,25 +13,3 @@ type HTTPError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
-
-type ValidateTokenRequest struct{}
-
-type GenerateRayTokenRequest struct{}
-
-type GetOMSTokenRequest struct{}
-
-type PutOMSTokenRequest struct{}
-
-type GenerateTokenRequest struct{}
-
-type ExchangeTokenRequest struct{}
-
-type RevokeOMSTokenRequest struct{}
-
-type RevokeTokenRequest struct{}
-
-type RevokeEncryptedTokenRequest struct{}
-
-type RevokeClientTokenRequest struct{}
-
-type RevokeSessionsRequest struct{}
