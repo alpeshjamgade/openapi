@@ -11,4 +11,6 @@ CREATE TABLE users
     password   TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-)
+);
+
+CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
