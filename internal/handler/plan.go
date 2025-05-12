@@ -33,13 +33,7 @@ func (h *Handler) CreatePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plan := &models.Plan{
-		Name:   req.Name,
-		Type:   req.Type,
-		Status: req.Status,
-		Amount: req.Amount,
-	}
-	err = h.Service.CreatePlan(ctx, plan)
+	err = h.Service.CreatePlan(ctx, req)
 	if err != nil {
 		utils.ErrorJSON(w, err, http.StatusInternalServerError)
 		return
@@ -97,14 +91,7 @@ func (h *Handler) UpdatePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plan := &models.Plan{
-		ID:     req.ID,
-		Name:   req.Name,
-		Type:   req.Type,
-		Amount: req.Amount,
-		Status: req.Status,
-	}
-	err = h.Service.UpdatePlan(ctx, plan)
+	err = h.Service.UpdatePlan(ctx, req)
 	if err != nil {
 		res.Status = "error"
 		res.Message = err.Error()

@@ -28,9 +28,9 @@ type IService interface {
 	DeleteUserAppByID(ctx context.Context, id string) error
 
 	// plan
-	CreatePlan(ctx context.Context, plan *models.Plan) error
+	CreatePlan(ctx context.Context, plan *models.CreatePlanRequest) error
 	GetPlanByID(ctx context.Context, id string) (models.Plan, error)
-	UpdatePlan(ctx context.Context, plan *models.Plan) error
+	UpdatePlan(ctx context.Context, plan *models.UpdatePlanRequest) error
 	DeletePlanByID(ctx context.Context, id string) error
 }
 
