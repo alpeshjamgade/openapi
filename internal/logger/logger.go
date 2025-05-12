@@ -16,6 +16,62 @@ import (
 var logger *zap.SugaredLogger
 var loggerCount int32
 
+func CreateFileLoggerWithCtx(ctx context.Context) *zap.SugaredLogger {
+	if logger == nil {
+		ensureLogDirExists()
+
+		encoderCfg := zap.NewProductionEncoderConfig()
+		encoderCfg.TimeKey = "timestamp"
+		encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
+
+		cfg := zap.Config{
+			Level:             GetLevel(),
+			Development:       false,
+			DisableCaller:     false,
+			DisableStacktrace: false,
+			Sampling:          nil,
+			Encoding:          config.LogEncoding,
+			EncoderConfig:     encoderCfg,
+			OutputPaths:       []string{"stdout"},
+			ErrorOutputPaths:  []string{"stdout"},
+		}
+
+		baseLogger := zap.Must(cfg.Build())
+
+		// Add lumberjack writer to core manually
+		fileName := fmt.Sprintf("%s_%v.log", constants.ServiceName, time.Now().Format("20060102150405"))
+		fileWriter := zapcore.AddSync(&lumberjack.Logger{
+			Filename:  config.LogFilePath + fileName,
+			MaxSize:   config.LogFileMaxSize,
+			LocalTime: true,
+		})
+
+		coreWithFile := zapcore.NewTee(
+			baseLogger.Core(), // original core (stdout)
+			zapcore.NewCore(
+				zapcore.NewJSONEncoder(encoderCfg),
+				fileWriter,
+				cfg.Level,
+			),
+		)
+
+		zapLogger := zap.New(coreWithFile, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+		logger = zapLogger.Sugar()
+		loggerCount++
+		logger.Infof("Logger initialized with zap.Config + file rotation, count: %d", loggerCount)
+
+	}
+
+	if ctx != nil && ctx.Value(constants.TraceID) != nil {
+		traceId := ctx.Value(constants.TraceID).(string)
+		return logger.WithOptions(zap.Fields(zap.String(constants.TraceID, traceId), zap.String(constants.Service, constants.ServiceName)))
+	}
+
+	return logger
+}
+
 func CreateLoggerWithCtx(ctx context.Context) *zap.SugaredLogger {
 	if logger == nil {
 		encoderCfg := zap.NewProductionEncoderConfig()
@@ -82,62 +138,6 @@ func CreateLogger() *zap.SugaredLogger {
 		loggerCount++
 		logger.Infof("Logger initialized with rotation, count: %d", loggerCount)
 	}
-	return logger
-}
-
-func CreateFileLoggerWithCtx(ctx context.Context) *zap.SugaredLogger {
-	if logger == nil {
-		ensureLogDirExists()
-
-		encoderCfg := zap.NewProductionEncoderConfig()
-		encoderCfg.TimeKey = "timestamp"
-		encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
-		encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
-
-		cfg := zap.Config{
-			Level:             GetLevel(),
-			Development:       false,
-			DisableCaller:     false,
-			DisableStacktrace: false,
-			Sampling:          nil,
-			Encoding:          config.LogEncoding,
-			EncoderConfig:     encoderCfg,
-			OutputPaths:       []string{"stdout"},
-			ErrorOutputPaths:  []string{"stdout"},
-		}
-
-		baseLogger := zap.Must(cfg.Build())
-
-		// Add lumberjack writer to core manually
-		fileName := fmt.Sprintf("%s_%v.log", constants.ServiceName, time.Now().Format("20060102150405"))
-		fileWriter := zapcore.AddSync(&lumberjack.Logger{
-			Filename:  config.LogFilePath + fileName,
-			MaxSize:   config.LogFileMaxSize,
-			LocalTime: true,
-		})
-
-		coreWithFile := zapcore.NewTee(
-			baseLogger.Core(), // original core (stdout)
-			zapcore.NewCore(
-				zapcore.NewJSONEncoder(encoderCfg),
-				fileWriter,
-				cfg.Level,
-			),
-		)
-
-		zapLogger := zap.New(coreWithFile, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
-		logger = zapLogger.Sugar()
-		loggerCount++
-		logger.Infof("Logger initialized with zap.Config + file rotation, count: %d", loggerCount)
-
-	}
-
-	if ctx != nil && ctx.Value(constants.TraceID) != nil {
-		traceId := ctx.Value(constants.TraceID).(string)
-		return logger.WithOptions(zap.Fields(zap.String(constants.TraceID, traceId), zap.String(constants.Service, constants.ServiceName)))
-	}
-
 	return logger
 }
 
