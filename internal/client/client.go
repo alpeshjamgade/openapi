@@ -47,3 +47,17 @@ func GetClients(ctx context.Context) (db.DB, *cache.RedisCache, *http.Client) {
 
 	return DbClient, CacheClient, HttpClient
 }
+
+func GetCacheClient(ctx context.Context) (*cache.RedisCache, error) {
+	Logger := logger.CreateLoggerWithCtx(ctx)
+
+	if CacheClient == nil {
+		CacheClient = cache.NewRedisCache(config.RedisHost, config.RedisPort)
+		if err := CacheClient.Connect(ctx); err != nil {
+			Logger.Panic(err)
+			return nil, err
+		}
+	}
+
+	return CacheClient, nil
+}

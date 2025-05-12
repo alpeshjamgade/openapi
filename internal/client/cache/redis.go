@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+func CacheAccesTokenKey(email string) string {
+	return fmt.Sprintf("token:%s", email)
+}
+
 func (r *RedisCache) Get(ctx context.Context, key string) (string, error) {
 
 	normalizedKey := normalize(key)
@@ -97,4 +101,27 @@ func (r *RedisCache) HDel(ctx context.Context, key string, field string) error {
 
 func normalize(key string) string {
 	return fmt.Sprintf("%s:%s", constants.ServiceName, key)
+}
+
+func (r *RedisCache) GetAccessToken(ctx context.Context, email string) (string, error) {
+	key := CacheAccesTokenKey(email)
+	normalizedKey := normalize(key)
+	result, err := r.Client.Get(ctx, normalizedKey).Result()
+	if err != nil {
+		return "", err
+	}
+
+	return result, err
+}
+
+func (r *RedisCache) SaveAccessToken(ctx context.Context, email string, value interface{}, duration time.Duration) error {
+
+	key := CacheAccesTokenKey(email)
+	normalizedKey := normalize(key)
+	_, err := r.Client.Set(ctx, normalizedKey, value, duration).Result()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
