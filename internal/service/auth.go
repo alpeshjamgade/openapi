@@ -19,7 +19,7 @@ func (svc *Service) Login(ctx context.Context, loginRequest *models.LoginRequest
 		return nil, errors.New("user not found")
 	}
 
-	authToken, err := utils.GenerateAuthToken(loginRequest.Email)
+	authToken, err := utils.GenerateAuthToken(ctx, loginRequest.Email, "user", "user")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (svc *Service) AdminLogin(ctx context.Context, loginRequest *models.LoginRe
 		return nil, errors.New("user not found")
 	}
 
-	authToken, err := utils.GenerateAuthToken(loginRequest.Email)
+	authToken, err := utils.GenerateAuthToken(ctx, loginRequest.Email, "admin", "admin")
 	if err != nil {
 		Logger.Errorw("generate auth token error", "error", err)
 		return nil, err

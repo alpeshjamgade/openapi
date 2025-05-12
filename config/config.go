@@ -16,6 +16,7 @@ var (
 	RedisHost      = "localhost"
 	RedisPort      = "6379"
 	RedisPoolSize  = 10
+	JwtSecretKey   = "secret"
 )
 
 func LoadConfig() error {
@@ -47,6 +48,7 @@ func LoadConfig() error {
 	RedisHost = viper.GetString("REDIS_HOST")
 	RedisPort = viper.GetString("REDIS_PORT")
 	RedisPoolSize = viper.GetInt("REDIS_POOL_SIZE")
+	JwtSecretKey = viper.GetString("JWT_SECRET_KEY")
 
 	return nil
 }
@@ -61,6 +63,6 @@ func setDefaults() {
 	viper.SetDefault("DATABASE_URL", DatabaseURL)
 	viper.SetDefault("REDIS_HOST", RedisHost)
 	viper.SetDefault("REDIS_PORT", RedisPort)
-	viper.SetDefault("REDIS_POOL_SIZE", RedisPoolSize)
+	viper.SetDefault("JWT_SECRET_KEY", RedisPoolSize)
 
 }
