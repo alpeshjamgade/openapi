@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"open-api/internal/models"
 	"strconv"
 	"strings"
@@ -32,7 +34,19 @@ func (repo *Repo) GetUserByEmail(ctx context.Context, email string) (models.User
 	var user models.User
 	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM users WHERE email = $1`, email)
 
-	err := sqlRow.Scan(&user)
+	err := sqlRow.Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Phone,
+		&user.Website,
+		&user.State,
+		&user.About,
+		&user.PartnerID,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 	if err != nil {
 		return user, err
 	}
@@ -104,4 +118,19 @@ func (repo *Repo) DeleteUserByEmail(ctx context.Context, email string) error {
 	}
 
 	return nil
+}
+
+func (repo *Repo) GetUserByEmailAndPassword(ctx context.Context, email, hashedPassword string) (*models.User, error) {
+	var user *models.User
+	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM users WHERE email = $1 AND password =$2`, email, hashedPassword)
+
+	err := sqlRow.Scan(&user)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, errors.New("email or password is not correct")
+	}
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

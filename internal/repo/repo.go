@@ -12,12 +12,14 @@ type IRepo interface {
 	// user
 	CreateUser(ctx context.Context, user *models.User) error
 	GetUserByEmail(ctx context.Context, email string) (models.User, error)
+	GetUserByEmailAndPassword(ctx context.Context, email, password string) (*models.User, error)
 	UpdateUser(ctx context.Context, user *models.User) error
 	DeleteUserByEmail(ctx context.Context, email string) error
 
 	// admin
 	CreateAdmin(ctx context.Context, admin *models.Admin) error
 	GetAdminByEmail(ctx context.Context, email string) (models.Admin, error)
+	GetAdminByEmailAndPassword(ctx context.Context, email, password string) (models.Admin, error)
 	UpdateAdmin(ctx context.Context, admin *models.Admin) error
 	DeleteAdminByEmail(ctx context.Context, email string) error
 

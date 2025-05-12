@@ -2,19 +2,16 @@ package service
 
 import (
 	"context"
-	"golang.org/x/crypto/bcrypt"
 	"open-api/internal/models"
+	"open-api/internal/utils"
 )
 
 func (svc *Service) CreateUser(ctx context.Context, user *models.User) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
+	hashedPassword := utils.HashSHA256(user.Password)
 
 	user.Password = string(hashedPassword)
 
-	err = svc.repo.CreateUser(ctx, user)
+	err := svc.repo.CreateUser(ctx, user)
 	if err != nil {
 		return err
 	}

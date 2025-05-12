@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"open-api/internal/models"
 	"strconv"
 	"strings"
@@ -27,9 +29,27 @@ func (repo *Repo) CreateAdmin(ctx context.Context, admin *models.Admin) error {
 
 func (repo *Repo) GetAdminByEmail(ctx context.Context, email string) (models.Admin, error) {
 	var admin models.Admin
-	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM admins WHERE email = $1`, email)
+	sqlRow := repo.DB.DB().QueryRow(`SELECT 
+    	id,
+		name, 
+		email, 
+		phone, 
+		status, 
+		created_at, 
+		updated_at, 
+		last_login
+    FROM admins WHERE email = $1`, email)
 
-	err := sqlRow.Scan(&admin)
+	err := sqlRow.Scan(
+		&admin.ID,
+		&admin.Name,
+		&admin.Email,
+		&admin.Phone,
+		&admin.Status,
+		&admin.CreatedAt,
+		&admin.UpdatedAt,
+		&admin.LastLogin,
+	)
 	if err != nil {
 		return admin, err
 	}
@@ -86,4 +106,28 @@ func (repo *Repo) DeleteAdminByEmail(ctx context.Context, email string) error {
 	}
 
 	return nil
+}
+
+func (repo *Repo) GetAdminByEmailAndPassword(ctx context.Context, email, hashedPassword string) (models.Admin, error) {
+	var admin models.Admin
+	sqlRow := repo.DB.DB().QueryRow(`SELECT 
+    	id,
+    	name,
+    	email,
+    	phone,
+    	status,
+    	created_at,
+    	updated_at,
+    	last_login
+    FROM admins WHERE email = $1 AND password =$2`, email, hashedPassword)
+
+	err := sqlRow.Scan(&admin.ID, &admin.Name, &admin.Email, &admin.Phone, &admin.Status, &admin.CreatedAt, &admin.UpdatedAt, &admin.LastLogin)
+	if errors.Is(err, sql.ErrNoRows) {
+		return admin, errors.New("email or password is not correct")
+	}
+	if err != nil {
+		return admin, err
+	}
+
+	return admin, nil
 }
