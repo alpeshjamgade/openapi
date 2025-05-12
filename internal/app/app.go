@@ -60,6 +60,7 @@ func Start() {
 }
 
 func appCli(ctx context.Context, service *service.Service) {
+	// flags, include for all the commands.
 	cli := flag.Bool("cli", false, "cli")
 	createAdmin := flag.Bool("create-admin", false, "Create a new admin")
 	email := flag.String("email", "", "Admin email")
@@ -71,14 +72,13 @@ func appCli(ctx context.Context, service *service.Service) {
 		return
 	}
 
-	fmt.Println(*email, *password)
 	if *createAdmin {
 		if *email == "" || *password == "" {
 			fmt.Println("email and password are required to create admin")
 			os.Exit(1)
 		}
 
-		admin := &models.Admin{Email: *email, Password: string(*password)}
+		admin := &models.Admin{Email: *email, Password: *password}
 		err := service.CreateAdmin(ctx, admin)
 		if err != nil {
 			fmt.Printf("Failed to create admin: %v\n", err)
