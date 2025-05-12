@@ -2,6 +2,7 @@ CREATE TABLE user_apps
 (
     id               SERIAL PRIMARY KEY,
     name             TEXT,
+    type             TEXT,
     trading_id       TEXT,
     redirect_url     TEXT,
     postback_url     TEXT,

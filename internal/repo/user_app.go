@@ -10,7 +10,7 @@ import (
 func (repo *Repo) CreateUserApp(ctx context.Context, userApp *models.UserApp) error {
 
 	_, err := repo.DB.DB().Exec(
-		`INSERT INTO user_apps(name, trading_id, redirect_url, postback_url, descrption, app_icon_s3_path, user_id, plan_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
+		`INSERT INTO user_apps(name, trading_id, redirect_url, postback_url, description, app_icon_s3_path, user_id, plan_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
 		userApp.Name,
 		userApp.TradingID,
 		userApp.RedirectURL,
@@ -30,9 +30,35 @@ func (repo *Repo) CreateUserApp(ctx context.Context, userApp *models.UserApp) er
 
 func (repo *Repo) GetUserAppByID(ctx context.Context, id string) (models.UserApp, error) {
 	var userApp models.UserApp
-	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM user_apps WHERE id = $1`, id)
+	sqlRow := repo.DB.DB().QueryRow(`SELECT *
+    	id,
+    	name,
+    	type,
+    	trading_id,
+    	redirect_url,
+    	postback_url,
+    	description,
+    	app_icon_s3_path,
+    	user_id,
+    	plan_id,
+    	created_at,
+    	updated_at,
+    FROM user_apps WHERE id = $1`, id)
 
-	err := sqlRow.Scan(&userApp)
+	err := sqlRow.Scan(
+		&userApp.ID,
+		&userApp.Name,
+		&userApp.Type,
+		&userApp.TradingID,
+		&userApp.RedirectURL,
+		&userApp.PostbackURL,
+		&userApp.Description,
+		&userApp.AppIconS3Path,
+		&userApp.UserID,
+		&userApp.PlanID,
+		&userApp.CreatedAt,
+		&userApp.UpdatedAt,
+	)
 	if err != nil {
 		return userApp, err
 	}

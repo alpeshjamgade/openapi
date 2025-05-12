@@ -5,6 +5,7 @@ import "time"
 type UserApp struct {
 	ID            int       `json:"id" db:"id"`
 	Name          string    `json:"name" db:"name"`
+	Type          string    `json:"type" db:"type"`
 	TradingID     string    `json:"trading_id" db:"trading_id"`
 	RedirectURL   string    `json:"redirect_url" db:"redirect_url"`
 	PostbackURL   string    `json:"postback_url" db:"postback_url"`
