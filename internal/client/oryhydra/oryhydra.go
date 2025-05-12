@@ -9,7 +9,6 @@ import (
 	"open-api/internal/logger"
 	"open-api/internal/models"
 	"open-api/internal/utils"
-	"strings"
 )
 
 type IOryHydra interface {
@@ -25,7 +24,7 @@ func NewOryHydra(client *http.Client, baseURL *url.URL) *OryHydra {
 	return &OryHydra{HttpClient: client, BaseURL: baseURL}
 }
 
-func (o *OryHydra) CreateApp(ctx context.Context, oAuthClientID string, oAuthClientName string, clientSecret string, redirectUris []string, scopes []string, grantTypes []string) (*models.HTTPResponse, error) {
+func (o *OryHydra) CreateApp(ctx context.Context, createOauthClientReq *models.CreateOauthClientRequest) (*models.CreateOauthClientResponse, error) {
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
 	apiUrl := utils.BuildURL(o.BaseURL, "/clients", nil)
@@ -34,17 +33,8 @@ func (o *OryHydra) CreateApp(ctx context.Context, oAuthClientID string, oAuthCli
 		"Content-Type": "text/plain",
 	}
 
-	reqBody := map[string]interface{}{
-		"client_id":     oAuthClientID,
-		"client_secret": clientSecret,
-		"client_name":   oAuthClientName,
-		"scopes":        strings.Join(scopes, " "),
-		"grant_types":   grantTypes,
-		"redirect_uris": redirectUris,
-	}
-
-	Logger.Infof("oryhydra/CreateApp: http request info, method: %v, url, %v, headers: %v, req_body: %v", method, apiUrl, headers, reqBody)
-	statusCode, respBodyBytes, err := utils.MakeHttpRequest(ctx, o.HttpClient, method, apiUrl, reqBody, headers)
+	Logger.Infof("oryhydra/CreateApp: http request info, method: %v, url, %v, headers: %v, req_body: %v", method, apiUrl, headers, createOauthClientReq)
+	statusCode, respBodyBytes, err := utils.MakeHttpRequest(ctx, o.HttpClient, method, apiUrl, createOauthClientReq, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +44,7 @@ func (o *OryHydra) CreateApp(ctx context.Context, oAuthClientID string, oAuthCli
 		return nil, errors.New("error signing up")
 	}
 
-	resp := models.HTTPResponse{}
+	resp := models.CreateOauthClientResponse{}
 	err = json.Unmarshal(respBodyBytes, &resp)
 	if err != nil {
 		Logger.Errorw("http response unmarshalling failed", "error", err, "http_response", string(respBodyBytes))
