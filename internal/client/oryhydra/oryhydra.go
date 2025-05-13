@@ -6,9 +6,9 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"open-api-client/internal/logger"
-	"open-api-client/internal/models"
-	"open-api-client/internal/utils"
+	"openapi-client/internal/logger"
+	"openapi-client/internal/models"
+	"openapi-client/internal/utils"
 )
 
 type IOryHydra interface {

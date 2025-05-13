@@ -23,10 +23,10 @@ var (
 func LoadConfig() error {
 	viper.SetConfigType("json")
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("open-api-client")
+	viper.SetEnvPrefix("openapi-client")
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("$HOME/.open-api-client")
-	viper.AddConfigPath("/etc/open-api-client")
+	viper.AddConfigPath("$HOME/.openapi-client")
+	viper.AddConfigPath("/etc/openapi-client")
 	viper.AddConfigPath("./config")
 	viper.AddConfigPath("/app")
 	viper.SetConfigName("config")

@@ -3,9 +3,9 @@ package middlewares
 import (
 	"context"
 	"net/http"
-	"open-api-client/internal/constants"
-	"open-api-client/internal/logger"
-	"open-api-client/internal/utils"
+	"openapi-client/internal/constants"
+	"openapi-client/internal/logger"
+	"openapi-client/internal/utils"
 	"time"
 )
 

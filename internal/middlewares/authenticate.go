@@ -3,9 +3,9 @@ package middlewares
 import (
 	"context"
 	"net/http"
-	"open-api-client/internal/constants"
-	"open-api-client/internal/models"
-	"open-api-client/internal/utils"
+	"openapi-client/internal/constants"
+	"openapi-client/internal/models"
+	"openapi-client/internal/utils"
 )
 
 func Authenticate(next http.Handler) http.Handler {

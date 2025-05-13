@@ -2,13 +2,13 @@ package constants
 
 import (
 	"github.com/gorilla/sessions"
-	"open-api-client/config"
+	"openapi-client/config"
 )
 
 const (
 	TraceID     = "trace_id"
 	Service     = "service"
-	ServiceName = "open-api-client"
+	ServiceName = "openapi-client"
 	Empty       = ""
 )
 

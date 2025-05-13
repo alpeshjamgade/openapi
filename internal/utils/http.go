@@ -8,8 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"open-api-client/internal/logger"
-	"open-api-client/internal/models"
+	"openapi-client/internal/logger"
+	"openapi-client/internal/models"
 )
 
 func ReadJSON(w http.ResponseWriter, r *http.Request, data any) error {

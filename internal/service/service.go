@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"open-api-client/internal/models"
-	"open-api-client/internal/repo"
+	"openapi-client/internal/models"
+	"openapi-client/internal/repo"
 )
 
 type IService interface {

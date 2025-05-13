@@ -1,4 +1,4 @@
-module open-api-client
+module openapi-client
 
 go 1.23.0
 

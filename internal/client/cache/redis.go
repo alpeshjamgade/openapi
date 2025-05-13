@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"open-api-client/internal/constants"
+	"openapi-client/internal/constants"
 	"time"
 )
 

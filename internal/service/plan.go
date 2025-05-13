@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"open-api-client/internal/models"
+	"openapi-client/internal/models"
 )
 
 func (svc *Service) CreatePlan(ctx context.Context, createPlanRequest *models.CreatePlanRequest) error {

@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"open-api-client/internal/models"
+	"openapi-client/internal/models"
 	"strconv"
 	"strings"
 )

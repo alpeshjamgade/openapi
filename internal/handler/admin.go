@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"net/http"
-	"open-api-client/internal/constants"
-	"open-api-client/internal/logger"
-	"open-api-client/internal/models"
-	"open-api-client/internal/utils"
+	"openapi-client/internal/constants"
+	"openapi-client/internal/logger"
+	"openapi-client/internal/models"
+	"openapi-client/internal/utils"
 )
 
 func (h *Handler) CreateAdmin(w http.ResponseWriter, r *http.Request) {

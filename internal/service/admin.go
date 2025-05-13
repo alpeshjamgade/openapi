@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"open-api-client/internal/models"
-	"open-api-client/internal/utils"
+	"openapi-client/internal/models"
+	"openapi-client/internal/utils"
 )
 
 func (svc *Service) CreateAdmin(ctx context.Context, admin *models.Admin) error {

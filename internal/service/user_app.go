@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"open-api-client/internal/models"
+	"openapi-client/internal/models"
 )
 
 func (svc *Service) CreateUserApp(ctx context.Context, createUserAppRequest *models.CreateUserAppRequest) error {

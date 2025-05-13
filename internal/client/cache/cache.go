@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	apmgoredis "go.elastic.co/apm/module/apmgoredisv8/v2"
-	"open-api-client/config"
-	"open-api-client/internal/logger"
+	"openapi-client/config"
+	"openapi-client/internal/logger"
 	"time"
 )
 
