@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"open-api/internal/models"
-	"open-api/internal/repo"
+	"open-api-client/internal/models"
+	"open-api-client/internal/repo"
 )
 
 type IService interface {
@@ -22,9 +22,9 @@ type IService interface {
 	DeleteAdminByEmail(ctx context.Context, email string) error
 
 	// user_app
-	CreateUserApp(ctx context.Context, userApp *models.UserApp) error
+	CreateUserApp(ctx context.Context, userApp *models.CreateUserAppRequest) error
 	GetUserAppByID(ctx context.Context, id string) (models.UserApp, error)
-	UpdateUserApp(ctx context.Context, userApp *models.UserApp) error
+	UpdateUserApp(ctx context.Context, userApp *models.UpdateUserAppRequest) error
 	DeleteUserAppByID(ctx context.Context, id string) error
 
 	// plan

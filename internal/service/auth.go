@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	"open-api/internal/logger"
-	"open-api/internal/models"
-	"open-api/internal/utils"
+	"open-api-client/internal/logger"
+	"open-api-client/internal/models"
+	"open-api-client/internal/utils"
 )
 
 func (svc *Service) Login(ctx context.Context, loginRequest *models.LoginRequest) (*models.LoginResponse, error) {

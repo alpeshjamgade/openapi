@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"go.elastic.co/apm/module/apmsql"
 	_ "go.elastic.co/apm/module/apmsql/pq"
-	"open-api/internal/logger"
+	"open-api-client/internal/logger"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"open-api/internal/models"
-	"open-api/internal/utils"
+	"open-api-client/internal/models"
+	"open-api-client/internal/utils"
 )
 
 func (svc *Service) CreateUser(ctx context.Context, user *models.User) error {

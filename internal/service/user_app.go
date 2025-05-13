@@ -2,11 +2,22 @@ package service
 
 import (
 	"context"
-	"open-api/internal/models"
+	"open-api-client/internal/models"
 )
 
-func (svc *Service) CreateUserApp(ctx context.Context, userApp *models.UserApp) error {
+func (svc *Service) CreateUserApp(ctx context.Context, createUserAppRequest *models.CreateUserAppRequest) error {
 
+	userApp := &models.UserApp{
+		Name:          createUserAppRequest.Name,
+		Type:          createUserAppRequest.Type,
+		TradingID:     createUserAppRequest.TradingID,
+		RedirectURL:   createUserAppRequest.RedirectURL,
+		PostbackURL:   createUserAppRequest.PostbackURL,
+		Description:   createUserAppRequest.Description,
+		AppIconS3Path: createUserAppRequest.AppIconS3Path,
+		UserID:        createUserAppRequest.UserID,
+		PlanID:        createUserAppRequest.PlanID,
+	}
 	err := svc.repo.CreateUserApp(ctx, userApp)
 	if err != nil {
 		return err
@@ -25,7 +36,19 @@ func (svc *Service) GetUserAppByID(ctx context.Context, id string) (models.UserA
 	return userApp, nil
 }
 
-func (svc *Service) UpdateUserApp(ctx context.Context, userApp *models.UserApp) error {
+func (svc *Service) UpdateUserApp(ctx context.Context, updateUserAppRequest *models.UpdateUserAppRequest) error {
+	userApp := &models.UserApp{
+		Name:          updateUserAppRequest.Name,
+		Type:          updateUserAppRequest.Type,
+		TradingID:     updateUserAppRequest.TradingID,
+		RedirectURL:   updateUserAppRequest.RedirectURL,
+		PostbackURL:   updateUserAppRequest.PostbackURL,
+		Description:   updateUserAppRequest.Description,
+		AppIconS3Path: updateUserAppRequest.AppIconS3Path,
+		UserID:        updateUserAppRequest.UserID,
+		PlanID:        updateUserAppRequest.PlanID,
+	}
+
 	err := svc.repo.UpdateUserApp(ctx, userApp)
 	if err != nil {
 		return err

@@ -3,16 +3,17 @@ package handler
 import (
 	"context"
 	"net/http"
-	"open-api/internal/constants"
-	"open-api/internal/logger"
-	"open-api/internal/models"
-	"open-api/internal/utils"
+	"open-api-client/internal/constants"
+	"open-api-client/internal/logger"
+	"open-api-client/internal/models"
+	"open-api-client/internal/utils"
 )
 
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
+	session, _ := constants.CookieStore.Get(r, "openapi")
 	req := &models.LoginRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
@@ -33,7 +34,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loginRespose, err := h.Service.Login(ctx, req)
+	loginResponse, err := h.Service.Login(ctx, req)
 	if err != nil {
 		res.Status = "error"
 		res.Message = err.Error()
@@ -41,8 +42,16 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	session.Values["email"] = req.Email
+	session.Values["authToken"] = loginResponse.AuthToken
+	err = session.Save(r, w)
+	if err != nil {
+		utils.ErrorJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
 	res.Message = "success"
-	res.Data = loginRespose
+	res.Data = loginResponse
 	utils.WriteJSON(w, http.StatusOK, res)
 }
 
@@ -50,6 +59,7 @@ func (h *Handler) AdminLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
+	session, _ := constants.CookieStore.Get(r, "openapi")
 	req := &models.LoginRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
@@ -76,6 +86,14 @@ func (h *Handler) AdminLogin(w http.ResponseWriter, r *http.Request) {
 		res.Status = "error"
 		res.Message = err.Error()
 		utils.WriteJSON(w, http.StatusBadRequest, res)
+		return
+	}
+
+	session.Values["email"] = req.Email
+	session.Values["authToken"] = loginResponse.AuthToken
+	err = session.Save(r, w)
+	if err != nil {
+		utils.ErrorJSON(w, err, http.StatusInternalServerError)
 		return
 	}
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"open-api/internal/models"
+	"open-api-client/internal/models"
 	"strconv"
 	"strings"
 )

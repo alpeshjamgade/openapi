@@ -23,7 +23,7 @@ run:
 # Dockerize
 dockerize:
 	@echo "Building app..."
-	docker build -t registry.tradelab.in/open-api:$(TAG) .
+	docker build -t registry.tradelab.in/open-api-client:$(TAG) .
 	@echo "Done!"
 
 migration_create:

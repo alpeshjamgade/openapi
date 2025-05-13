@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"net/http"
-	"open-api/internal/constants"
-	"open-api/internal/logger"
-	"open-api/internal/models"
-	"open-api/internal/utils"
+	"open-api-client/internal/constants"
+	"open-api-client/internal/logger"
+	"open-api-client/internal/models"
+	"open-api-client/internal/utils"
 )
 
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {

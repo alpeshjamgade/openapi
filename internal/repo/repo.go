@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"net/http"
-	"open-api/internal/client/cache"
-	"open-api/internal/client/db"
-	"open-api/internal/models"
+	"open-api-client/internal/client/cache"
+	"open-api-client/internal/client/db"
+	"open-api-client/internal/models"
 )
 
 type IRepo interface {

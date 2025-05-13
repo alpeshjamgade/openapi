@@ -3,17 +3,17 @@ package handler
 import (
 	"context"
 	"net/http"
-	"open-api/internal/constants"
-	"open-api/internal/logger"
-	"open-api/internal/models"
-	"open-api/internal/utils"
+	"open-api-client/internal/constants"
+	"open-api-client/internal/logger"
+	"open-api-client/internal/models"
+	"open-api-client/internal/utils"
 )
 
 func (h *Handler) CreateUserApp(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.UserApp{}
+	req := &models.CreateUserAppRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
 	err := utils.ReadJSON(w, r, req)
@@ -71,7 +71,7 @@ func (h *Handler) UpdateUserApp(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.UserApp{}
+	req := &models.UpdateUserAppRequest{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
 	err := utils.ReadJSON(w, r, req)

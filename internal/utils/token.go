@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"open-api/config"
-	"open-api/internal/client"
-	"open-api/internal/logger"
+	"open-api-client/config"
+	"open-api-client/internal/client"
+	"open-api-client/internal/logger"
 	"time"
 )
 

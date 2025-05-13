@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/gorilla/mux"
 	"net/http"
-	"open-api/internal/middlewares"
-	"open-api/internal/service"
+	"open-api-client/internal/middlewares"
+	"open-api-client/internal/service"
 )
 
 type Handler struct {

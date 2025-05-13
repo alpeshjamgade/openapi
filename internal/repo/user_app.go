@@ -2,7 +2,7 @@ package repo
 
 import (
 	"context"
-	"open-api/internal/models"
+	"open-api-client/internal/models"
 	"strconv"
 	"strings"
 )
@@ -30,8 +30,8 @@ func (repo *Repo) CreateUserApp(ctx context.Context, userApp *models.UserApp) er
 
 func (repo *Repo) GetUserAppByID(ctx context.Context, id string) (models.UserApp, error) {
 	var userApp models.UserApp
-	sqlRow := repo.DB.DB().QueryRow(`SELECT *
-    	id,
+	sqlRow := repo.DB.DB().QueryRow(`SELECT 
+			id,
     	name,
     	type,
     	trading_id,
@@ -42,7 +42,7 @@ func (repo *Repo) GetUserAppByID(ctx context.Context, id string) (models.UserApp
     	user_id,
     	plan_id,
     	created_at,
-    	updated_at,
+    	updated_at
     FROM user_apps WHERE id = $1`, id)
 
 	err := sqlRow.Scan(

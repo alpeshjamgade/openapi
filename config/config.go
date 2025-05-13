@@ -17,15 +17,16 @@ var (
 	RedisPort      = "6379"
 	RedisPoolSize  = 10
 	JwtSecretKey   = "secret"
+	SessionKey     = "secret-key"
 )
 
 func LoadConfig() error {
 	viper.SetConfigType("json")
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("open-api")
+	viper.SetEnvPrefix("open-api-client")
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("$HOME/.open-api")
-	viper.AddConfigPath("/etc/open-api")
+	viper.AddConfigPath("$HOME/.open-api-client")
+	viper.AddConfigPath("/etc/open-api-client")
 	viper.AddConfigPath("./config")
 	viper.AddConfigPath("/app")
 	viper.SetConfigName("config")
@@ -49,6 +50,7 @@ func LoadConfig() error {
 	RedisPort = viper.GetString("REDIS_PORT")
 	RedisPoolSize = viper.GetInt("REDIS_POOL_SIZE")
 	JwtSecretKey = viper.GetString("JWT_SECRET_KEY")
+	SessionKey = viper.GetString("SESSION_KEY")
 
 	return nil
 }
@@ -64,5 +66,6 @@ func setDefaults() {
 	viper.SetDefault("REDIS_HOST", RedisHost)
 	viper.SetDefault("REDIS_PORT", RedisPort)
 	viper.SetDefault("JWT_SECRET_KEY", RedisPoolSize)
+	viper.SetDefault("SESSION_KEY", SessionKey)
 
 }
