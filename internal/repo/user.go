@@ -12,7 +12,7 @@ import (
 func (repo *Repo) CreateUser(ctx context.Context, user *models.User) error {
 
 	_, err := repo.DB.DB().Exec(
-		`INSERT INTO users(name, email, phone, website, about, state, partner_id, password) VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
+		`INSERT INTO users(name, email, phone, website, about, state, partner_id, password, role_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 		user.Name,
 		user.Email,
 		user.Phone,
@@ -21,6 +21,7 @@ func (repo *Repo) CreateUser(ctx context.Context, user *models.User) error {
 		user.State,
 		user.PartnerID,
 		user.Password,
+		user.RoleID,
 	)
 
 	if err != nil {
@@ -32,7 +33,7 @@ func (repo *Repo) CreateUser(ctx context.Context, user *models.User) error {
 
 func (repo *Repo) GetUserByEmail(ctx context.Context, email string) (models.User, error) {
 	var user models.User
-	sqlRow := repo.DB.DB().QueryRow(`SELECT * FROM users WHERE email = $1`, email)
+	sqlRow := repo.DB.DB().QueryRow(`SELECT id, name, email, phone, website, state, about, partner_id, password, role_id, created_at, updated_at FROM users WHERE email = $1`, email)
 
 	err := sqlRow.Scan(
 		&user.ID,
@@ -44,6 +45,7 @@ func (repo *Repo) GetUserByEmail(ctx context.Context, email string) (models.User
 		&user.About,
 		&user.PartnerID,
 		&user.Password,
+		&user.RoleID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)

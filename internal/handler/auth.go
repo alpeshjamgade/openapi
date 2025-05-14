@@ -43,6 +43,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Values["email"] = req.Email
+	session.Values["user_id"] = loginResponse.UserID
 	session.Values["authToken"] = loginResponse.AuthToken
 	err = session.Save(r, w)
 	if err != nil {
@@ -90,6 +91,7 @@ func (h *Handler) AdminLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Values["email"] = req.Email
+	session.Values["user_id"] = loginResponse.UserID
 	session.Values["authToken"] = loginResponse.AuthToken
 	err = session.Save(r, w)
 	if err != nil {

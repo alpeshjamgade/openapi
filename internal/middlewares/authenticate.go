@@ -10,7 +10,6 @@ import (
 
 func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO : complete this logic
 		ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 
 		res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
@@ -23,7 +22,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		session, err := utils.ValidateAuthToken(ctx, accessToken)
+		tokenSession, err := utils.ValidateAuthToken(ctx, accessToken, constants.Client)
 		if err != nil {
 			res.Status = "error"
 			res.Message = "Request unauthorized"
@@ -31,8 +30,48 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx = context.WithValue(ctx, constants.SessionKey, session)
+		session, err := constants.CookieStore.Get(r, "openapi")
+		if err != nil || tokenSession.UserID != session.Values["user_id"] {
+			res.Status = "error"
+			res.Message = "Request unauthorized"
+			utils.WriteJSON(w, http.StatusUnauthorized, res)
+			return
+		}
 
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(w, r)
+	})
+}
+
+func AuthenticateAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
+
+		res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
+
+		accessToken := r.Header.Get("x-access-token")
+		if accessToken == "" {
+			res.Status = "error"
+			res.Message = "Request unauthorized"
+			utils.WriteJSON(w, http.StatusUnauthorized, res)
+			return
+		}
+
+		_, err := utils.ValidateAuthToken(ctx, accessToken, constants.Admin)
+		if err != nil {
+			res.Status = "error"
+			res.Message = "Request unauthorized"
+			utils.WriteJSON(w, http.StatusUnauthorized, res)
+			return
+		}
+
+		//session, err := constants.CookieStore.Get(r, "openapi")
+		//if err != nil || tokenSession.UserID != session.Values["user_id"] {
+		//	res.Status = "error"
+		//	res.Message = "Request unauthorized"
+		//	utils.WriteJSON(w, http.StatusUnauthorized, res)
+		//	return
+		//}
+
+		next.ServeHTTP(w, r)
 	})
 }

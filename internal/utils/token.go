@@ -21,7 +21,7 @@ type JWTToken struct {
 	RtExpires    int64
 }
 
-func GenerateAuthToken(ctx context.Context, id int, name string, email string) (string, error) {
+func GenerateAuthToken(ctx context.Context, id int, name string, email string, userType string) (string, error) {
 
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 	jwtKey := config.JwtSecretKey
@@ -57,11 +57,12 @@ func GenerateAuthToken(ctx context.Context, id int, name string, email string) (
 	}
 
 	expiry := time.Unix(token.AtExpires, 0)
-	err = cacheClient.SaveAccessToken(ctx, email, token.AccessToken, expiry.Sub(currTime))
+	cacheKey := AccessTokenKey(email, userType)
+	err = cacheClient.SaveAccessToken(ctx, cacheKey, token.AccessToken, expiry.Sub(currTime))
 	return token.AccessToken, nil
 }
 
-func ValidateAuthToken(ctx context.Context, accessToken string) (*models.Session, error) {
+func ValidateAuthToken(ctx context.Context, accessToken string, userType string) (*models.Session, error) {
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
 	jwtKey := config.JwtSecretKey
@@ -113,12 +114,17 @@ func ValidateAuthToken(ctx context.Context, accessToken string) (*models.Session
 		return nil, err
 	}
 
-	key, _ := cacheClient.GetAccessToken(ctx, email)
-	if key != fmt.Sprintf("%s", accessToken) {
+	cacheKey := AccessTokenKey(email, userType)
+	cachedToken, _ := cacheClient.GetAccessToken(ctx, cacheKey)
+	if cachedToken != fmt.Sprintf("%s", accessToken) {
 		Logger.Error("redis key not match")
 
 		return nil, errors.New("invalid token")
 	}
 
 	return session, nil
+}
+
+func AccessTokenKey(email string, userType string) string {
+	return fmt.Sprintf("token:%s:%s", userType, email)
 }

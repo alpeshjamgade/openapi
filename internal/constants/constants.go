@@ -11,6 +11,8 @@ const (
 	ServiceName = "openapi-client"
 	Empty       = ""
 	SessionKey  = "session"
+	Admin       = "admin"
+	Client      = "client"
 )
 
 var (

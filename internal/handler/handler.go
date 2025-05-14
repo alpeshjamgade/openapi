@@ -27,7 +27,7 @@ func (h *Handler) SetupRoutes(r *mux.Router) {
 	user.Use(middlewares.Authenticate)
 
 	admin := r.NewRoute().Subrouter()
-	admin.Use(middlewares.Authenticate)
+	admin.Use(middlewares.AuthenticateAdmin)
 
 	// user
 	user.HandleFunc("/api/v1/user", h.CreateUser).Methods(http.MethodPost)
