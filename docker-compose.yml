@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  openapi-client:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+    image: registry.tradelab.in/openapi-client:test-1
+    deploy:
+      mode: replicated
+      replicas: 1
+    network_mode: host
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./config/config.json:/etc/openapi-client/config.json
