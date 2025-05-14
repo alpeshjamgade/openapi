@@ -17,6 +17,10 @@ build:
   script:
     - go build -o _build/${APP_BINARY} ./cmd/main.go
     - ps aux
+  rules:
+    - if: '$CI_COMMIT_REF_NAME !~ /^Release.*/'
+      when: always
+    - when: never
 
 docker-build:
   stage: docker-build
