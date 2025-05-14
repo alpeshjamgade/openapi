@@ -23,7 +23,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		_, err := utils.ValidateAuthToken(ctx, accessToken)
+		session, err := utils.ValidateAuthToken(ctx, accessToken)
 		if err != nil {
 			res.Status = "error"
 			res.Message = "Request unauthorized"
@@ -31,6 +31,8 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		ctx = context.WithValue(ctx, constants.SessionKey, session)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

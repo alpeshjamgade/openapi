@@ -1,9 +1,12 @@
 package handler
 
 import (
+	"context"
 	"github.com/gorilla/mux"
 	"net/http"
+	"openapi-client/internal/constants"
 	"openapi-client/internal/middlewares"
+	"openapi-client/internal/models"
 	"openapi-client/internal/service"
 )
 
@@ -55,4 +58,35 @@ func (h *Handler) SetupRoutes(r *mux.Router) {
 	user.HandleFunc("/api/v1/user/logout", h.Logout).Methods(http.MethodPost)
 	public.HandleFunc("/api/v1/admin/login", h.AdminLogin).Methods(http.MethodPost)
 	user.HandleFunc("/api/v1/admin/logout", h.AdminLogin).Methods(http.MethodPost)
+
+	// role
+	admin.HandleFunc("/api/v1/admin/role", h.CreateRole).Methods(http.MethodPost)
+	admin.HandleFunc("/api/v1/admin/role", h.GetRoleByName).Methods(http.MethodGet)
+	admin.HandleFunc("/api/v1/admin/role", h.UpdateRole).Methods(http.MethodPut)
+	admin.HandleFunc("/api/v1/admin/role", h.DeleteRoleByName).Methods(http.MethodDelete)
+
+	// permission
+	admin.HandleFunc("/api/v1/admin/permission", h.CreatePermission).Methods(http.MethodPost)
+	admin.HandleFunc("/api/v1/admin/permission", h.GetPermissionByName).Methods(http.MethodGet)
+	admin.HandleFunc("/api/v1/admin/permission", h.UpdatePermission).Methods(http.MethodPut)
+	admin.HandleFunc("/api/v1/admin/permission", h.DeletePermissionByName).Methods(http.MethodDelete)
+
+	// role permission
+	admin.HandleFunc("/api/v1/admin/role/permission", h.CreateRolePermission).Methods(http.MethodPost)
+
+}
+
+func (h *Handler) CheckPermission(ctx context.Context, permission string) bool {
+	_, ok := ctx.Value(constants.SessionKey).(*models.Session)
+	if !ok {
+		return false
+	}
+
+	//userId := session.UserID
+	//ok = h.Service.HasPermission(userId, permission)
+	//if !ok {
+	//	return false
+	//}
+
+	return true
 }

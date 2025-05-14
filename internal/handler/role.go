@@ -9,76 +9,11 @@ import (
 	"openapi-client/internal/utils"
 )
 
-func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
-	req := &models.User{}
-	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
-
-	ok := h.CheckPermission(ctx, "create-user")
-	if !ok {
-		Logger.Errorw("invalid session")
-		utils.WriteInvalidSession(w, res)
-		return
-	}
-
-	err := utils.ReadJSON(w, r, req)
-	if err != nil {
-		Logger.Errorw("error reading request", "error", err)
-		res.Status = "error"
-		res.Message = "Invalid Request"
-		utils.WriteJSON(w, http.StatusBadRequest, res)
-		return
-	}
-
-	errs := utils.ValidateParams(req)
-	if errs != nil {
-		res.Status = "error"
-		res.Message = errs[0].Error()
-		utils.WriteJSON(w, http.StatusBadRequest, res)
-		return
-	}
-
-	err = h.Service.CreateUser(ctx, req)
-	if err != nil {
-		utils.ErrorJSON(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	res.Message = "User Created"
-	utils.WriteJSON(w, http.StatusOK, res)
-
-}
-
-func (h *Handler) GetUserByEmail(w http.ResponseWriter, r *http.Request) {
-	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
-
-	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
-
-	queryParams := r.URL.Query()
-	email := queryParams.Get("email")
-
-	user, err := h.Service.GetUserByEmail(ctx, email)
-	if err != nil {
-		res.Status = "error"
-		res.Message = err.Error()
-		utils.ErrorJSON(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	res.Status = "success"
-	res.Data = user
-	utils.WriteJSON(w, http.StatusOK, res)
-	return
-
-}
-
-func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
-	Logger := logger.CreateFileLoggerWithCtx(ctx)
-
-	req := &models.User{}
+	req := &models.Role{}
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
 	err := utils.ReadJSON(w, r, req)
@@ -98,7 +33,26 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Service.UpdateUser(ctx, req)
+	err = h.Service.CreateRole(ctx, req)
+	if err != nil {
+		utils.ErrorJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	res.Message = "Role Created"
+	utils.WriteJSON(w, http.StatusOK, res)
+
+}
+
+func (h *Handler) GetRoleByName(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
+
+	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
+
+	queryParams := r.URL.Query()
+	name := queryParams.Get("name")
+
+	role, err := h.Service.GetRoleByName(ctx, name)
 	if err != nil {
 		res.Status = "error"
 		res.Message = err.Error()
@@ -107,20 +61,59 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.Status = "success"
-	res.Message = "User Updated"
+	res.Data = role
+	utils.WriteJSON(w, http.StatusOK, res)
+	return
+
+}
+
+func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
+	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
+	Logger := logger.CreateFileLoggerWithCtx(ctx)
+
+	req := &models.UpdateRoleRequest{}
+	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
+
+	err := utils.ReadJSON(w, r, req)
+	if err != nil {
+		Logger.Errorw("error reading request", "error", err)
+		res.Status = "error"
+		res.Message = "Invalid Request"
+		utils.WriteJSON(w, http.StatusBadRequest, res)
+		return
+	}
+
+	errs := utils.ValidateParams(req)
+	if errs != nil {
+		res.Status = "error"
+		res.Message = errs[0].Error()
+		utils.WriteJSON(w, http.StatusBadRequest, res)
+		return
+	}
+
+	err = h.Service.UpdateRole(ctx, req)
+	if err != nil {
+		res.Status = "error"
+		res.Message = err.Error()
+		utils.ErrorJSON(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	res.Status = "success"
+	res.Message = "Role Updated"
 	utils.WriteJSON(w, http.StatusOK, res)
 	return
 }
 
-func (h *Handler) DeleteUserByEmail(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) DeleteRoleByName(w http.ResponseWriter, r *http.Request) {
 	ctx := context.WithValue(r.Context(), constants.TraceID, utils.GetUUID())
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
 	queryParams := r.URL.Query()
-	email := queryParams.Get("email")
+	name := queryParams.Get("name")
 	res := &models.HTTPResponse{Data: map[string]any{}, Status: "success", Message: ""}
 
-	err := h.Service.DeleteUserByEmail(ctx, email)
+	err := h.Service.DeleteRoleByName(ctx, name)
 	if err != nil {
 		Logger.Errorw("error reading request", "error", err)
 		res.Status = "error"
@@ -130,6 +123,6 @@ func (h *Handler) DeleteUserByEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.Status = "success"
-	res.Message = "User Deleted"
+	res.Message = "Role Deleted"
 	utils.WriteJSON(w, http.StatusOK, res)
 }

@@ -3,7 +3,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/openapi?sslmode=disa
 MIGRATION_PATH="./private/migrations/"
 
 # Build binary
-build:
+build-binary:
 	@echo "Building app..."
 	CGO_ENABLED=0 go build -o build/$(APP_BINARY) cmd/main.go
 	@echo "Done!"
@@ -36,6 +36,6 @@ migration_down:
 	migrate -path ${MIGRATION_PATH} -database ${DATABASE_URL} -verbose down ${NUMBER}
 
 migration_fix:
-	migrate -path ${MIGRATION_PATH} -database ${DATABASE_URL} force VERSION
+	migrate -path ${MIGRATION_PATH} -database ${DATABASE_URL} force ${VERSION}
 
 

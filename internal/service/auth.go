@@ -19,7 +19,7 @@ func (svc *Service) Login(ctx context.Context, loginRequest *models.LoginRequest
 		return nil, errors.New("user not found")
 	}
 
-	authToken, err := utils.GenerateAuthToken(ctx, loginRequest.Email, "user", "user")
+	authToken, err := utils.GenerateAuthToken(ctx, user.ID, user.Name, user.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -35,16 +35,16 @@ func (svc *Service) AdminLogin(ctx context.Context, loginRequest *models.LoginRe
 
 	hashedPassword := utils.HashSHA256(loginRequest.Password)
 
-	user, err := svc.repo.GetAdminByEmailAndPassword(ctx, loginRequest.Email, string(hashedPassword))
+	admin, err := svc.repo.GetAdminByEmailAndPassword(ctx, loginRequest.Email, string(hashedPassword))
 	if err != nil {
 		Logger.Errorw("error while fetching admin", "error", err)
 
 		return nil, err
-	} else if user.Email == "" {
+	} else if admin.Email == "" {
 		return nil, errors.New("user not found")
 	}
 
-	authToken, err := utils.GenerateAuthToken(ctx, loginRequest.Email, "admin", "admin")
+	authToken, err := utils.GenerateAuthToken(ctx, admin.ID, admin.Name, admin.Email)
 	if err != nil {
 		Logger.Errorw("generate auth token error", "error", err)
 		return nil, err

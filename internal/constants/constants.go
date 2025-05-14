@@ -10,6 +10,7 @@ const (
 	Service     = "service"
 	ServiceName = "openapi-client"
 	Empty       = ""
+	SessionKey  = "session"
 )
 
 var (

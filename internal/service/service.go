@@ -32,6 +32,21 @@ type IService interface {
 	GetPlanByID(ctx context.Context, id string) (models.Plan, error)
 	UpdatePlan(ctx context.Context, plan *models.UpdatePlanRequest) error
 	DeletePlanByID(ctx context.Context, id string) error
+
+	// role
+	CreateRole(ctx context.Context, role *models.Role) error
+	GetRoleByName(ctx context.Context, name string) (models.Role, error)
+	UpdateRole(ctx context.Context, role *models.UpdateRoleRequest) error
+	DeleteRoleByName(ctx context.Context, name string) error
+
+	// permission
+	CreatePermission(ctx context.Context, role *models.Permission) error
+	GetPermissionByName(ctx context.Context, name string) (models.Permission, error)
+	UpdatePermission(ctx context.Context, role *models.UpdatePermissionRequest) error
+	DeletePermissionByName(ctx context.Context, name string) error
+
+	// role permission
+	CreateRolePermission(ctx context.Context, rolePermission *models.RolePermission) error
 }
 
 type Service struct {

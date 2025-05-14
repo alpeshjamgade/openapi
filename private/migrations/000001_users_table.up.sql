@@ -7,10 +7,10 @@ CREATE TABLE users
     website    TEXT,
     about      TEXT,
     state      TEXT,
-    partner_id  TEXT,
+    partner_id TEXT,
     password   TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX idx_users_email_unique ON users(email);
+CREATE UNIQUE INDEX idx_users_email_unique ON users (email);

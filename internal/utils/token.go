@@ -8,6 +8,7 @@ import (
 	"openapi-client/config"
 	"openapi-client/internal/client"
 	"openapi-client/internal/logger"
+	"openapi-client/internal/models"
 	"time"
 )
 
@@ -20,7 +21,7 @@ type JWTToken struct {
 	RtExpires    int64
 }
 
-func GenerateAuthToken(ctx context.Context, email string, userType string, userRole string) (string, error) {
+func GenerateAuthToken(ctx context.Context, id int, name string, email string) (string, error) {
 
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 	jwtKey := config.JwtSecretKey
@@ -36,10 +37,10 @@ func GenerateAuthToken(ctx context.Context, email string, userType string, userR
 	atClaims := jwt.MapClaims{
 		"authorized":  true,
 		"access_uuid": token.AccessUuid,
+		"id":          id,
 		"email":       email,
+		"name":        name,
 		"exp":         token.AtExpires,
-		"user_type":   userType,
-		"user_role":   userRole,
 	}
 
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
@@ -60,7 +61,7 @@ func GenerateAuthToken(ctx context.Context, email string, userType string, userR
 	return token.AccessToken, nil
 }
 
-func ValidateAuthToken(ctx context.Context, accessToken string) (*jwt.Token, error) {
+func ValidateAuthToken(ctx context.Context, accessToken string) (*models.Session, error) {
 	Logger := logger.CreateFileLoggerWithCtx(ctx)
 
 	jwtKey := config.JwtSecretKey
@@ -85,10 +86,25 @@ func ValidateAuthToken(ctx context.Context, accessToken string) (*jwt.Token, err
 		return nil, errors.New("invalid token")
 	}
 
+	idFloat, ok := claims["id"].(float64)
+	if !ok {
+		return nil, errors.New("invalid token")
+	}
+
 	email, ok := claims["email"].(string)
 	if !ok {
-		Logger.Error(err)
 		return nil, errors.New("invalid token")
+	}
+
+	name, ok := claims["name"].(string)
+	if !ok {
+		return nil, errors.New("invalid token")
+	}
+
+	session := &models.Session{
+		UserID: int(idFloat),
+		Email:  email,
+		Name:   name,
 	}
 
 	cacheClient, err := client.GetCacheClient(ctx)
@@ -104,5 +120,5 @@ func ValidateAuthToken(ctx context.Context, accessToken string) (*jwt.Token, err
 		return nil, errors.New("invalid token")
 	}
 
-	return token, nil
+	return session, nil
 }
